@@ -1,4 +1,4 @@
-const ignoredWords = [
+export const ignoredWords = [
   "a",
   "about",
   "above",
@@ -175,5 +175,3 @@ const ignoredWords = [
   "yourself",
   "yourselves",
 ];
-
-export default ignoredWords;

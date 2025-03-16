@@ -1,0 +1,81 @@
+.container {
+  display: flex;
+  flex-direction: column;
+
+  padding: 10px;
+  font-family: Arial, sans-serif;
+}
+
+.panel {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
+.leftPanel {
+  flex: 0 0 20%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+}
+.centerPanel {
+  flex: 0 0 30%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.rightPanel {
+  flex: 0 0 45%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.fileUploadLabel {
+  padding: 10px 16px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.tabButtons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.tabButton {
+  padding: 8px 16px;
+  background-color: #f5f5f5;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.tabButtonActive {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.localeInput {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.localeButton {
+  margin-top: 16px;
+  padding: 10px 16px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+}
