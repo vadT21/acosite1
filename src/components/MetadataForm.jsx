@@ -2,34 +2,37 @@ import React from "react";
 import LocaleField from "./functionality/LocaleField";
 
 const MetadataForm = ({
-  title,
-  subtitle,
-  keywordsMeta,
+  selectedLocale,
+  localesData,
   setTitle,
   setSubtitle,
   setKeywordsMeta,
-  keywords,
+  setStatus,
+  createLocale,
+  generatorKeywords,
 }) => {
   return (
     <div>
-      <LocaleField
-        title={title}
-        subtitle={subtitle}
-        keywordsMeta={keywordsMeta}
-        setTitle={setTitle}
-        setSubtitle={setSubtitle}
-        setKeywordsMeta={setKeywordsMeta}
-        keywords={keywords}
-      />
-      <LocaleField
-        title={title}
-        subtitle={subtitle}
-        keywordsMeta={keywordsMeta}
-        setTitle={setTitle}
-        setSubtitle={setSubtitle}
-        setKeywordsMeta={setKeywordsMeta}
-        keywords={keywords}
-      />
+      {selectedLocale?.locales ? (
+        selectedLocale.locales.map((localeID) => (
+          <LocaleField
+            key={localeID}
+            name={localeID}
+            title={localesData[localeID].title}
+            subtitle={localesData[localeID].subtitle}
+            status={localesData[localeID].status}
+            keywordsMeta={localesData[localeID].keywordsMeta}
+            setTitle={setTitle}
+            setSubtitle={setSubtitle}
+            setKeywordsMeta={setKeywordsMeta}
+            setStatus={setStatus}
+            createLocale={createLocale}
+            generatorKeywords={generatorKeywords}
+          />
+        ))
+      ) : (
+        <div>Нет выбранных локалей. Пожалуйста, выберите локаль.</div>
+      )}
     </div>
   );
 };

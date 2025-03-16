@@ -2,11 +2,15 @@
 import { create } from "zustand";
 
 // Начальное состояние стора
-const initialState = {};
+const initialState = {
+  locales: {},
+  desc: "", // Новое состояние для описания
+  usedKeywordPhrases: {}, // Новое состояние для использованных фраз
+};
 
 // Создаем хранилище
-const useLocalesStore = create((set) => ({
-  locales: initialState, // Изначальные данные
+const useTotalStore = create((set, get) => ({
+  ...initialState, // Изначальные данные
 
   // Метод для обновления данных вкладки "Locale"
   updateLocaleTab: (localeCode, data) =>
@@ -18,13 +22,13 @@ const useLocalesStore = create((set) => ({
             id: localeCode,
             title: "",
             subtitle: "",
-            keywords: "",
+            keywordsMeta: "",
             inappTitle: "",
             inappSubtitle: "",
           }),
           title: data.title || "", // Заголовок
           subtitle: data.subtitle || "", // Подзаголовок
-          keywords: data.keywords || "", // Ключевые слова
+          keywordsMeta: data.keywordsMeta || "", // Ключевые слова
         },
       },
     })),
@@ -39,7 +43,7 @@ const useLocalesStore = create((set) => ({
             id: localeCode,
             title: "",
             subtitle: "",
-            keywords: "",
+            keywordsMeta: "",
             inappTitle: "",
             inappSubtitle: "",
           }),
@@ -52,19 +56,33 @@ const useLocalesStore = create((set) => ({
   // Метод для получения данных локали
   getLocale: (localeCode) => {
     return (
-      useLocalesStore.getState().locales[localeCode] || {
+      get().locales[localeCode] || {
         id: localeCode,
         title: "",
         subtitle: "",
-        keywords: "",
+        keywordsMeta: "",
         inappTitle: "",
         inappSubtitle: "",
       }
     );
   },
 
+  // Метод для обновления описания
+  updateDesc: (newDesc) => set({ desc: newDesc }),
+
+  // Метод для добавления использованных фраз
+  addUsedKeywordPhrases: (localeCode, phrases) =>
+    set((state) => ({
+      usedKeywordPhrases: {
+        ...state.usedKeywordPhrases,
+        [localeCode]: [
+          ...(state.usedKeywordPhrases[localeCode] || []),
+          ...phrases,
+        ],
+      },
+    })),
   // Метод для полной очистки стора
-  clearStore: () => set({ locales: initialState }), // Возвращаем начальное состояние
+  clearStore: () => set(initialState),
 }));
 
-export default useLocalesStore;
+export default useTotalStore;

@@ -3,27 +3,28 @@ import LocaleInput from "../common/LocaleInput";
 import styles from "./LocaleField.module.css";
 
 const LocaleField = ({
+  name,
   title,
   subtitle,
   keywordsMeta,
+  status,
   setTitle,
   setSubtitle,
   setKeywordsMeta,
-  keywords,
+  setStatus,
+  createLocale,
+  generatorKeywords,
 }) => {
-  // Функция для очистки поля
-  const handleClear = (setter) => {
-    setter("");
-  };
   return (
     <div className={styles.container}>
+      <div className={styles.name}>{name}</div>
       {/* Поле для title */}
       <div>
         <LocaleInput
           label="title"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          onClear={() => handleClear(setTitle)}
+          onChange={(e) => setTitle(e.target.value, name)}
+          onClear={() => setTitle("", name)}
           maxLength={30}
           length={title.length}
         />
@@ -34,8 +35,8 @@ const LocaleField = ({
         <LocaleInput
           label="subtitle"
           value={subtitle}
-          onChange={(e) => setSubtitle(e.target.value)}
-          onClear={() => handleClear(setSubtitle)}
+          onChange={(e) => setSubtitle(e.target.value, name)}
+          onClear={() => setSubtitle("", name)}
           maxLength={30}
           length={subtitle.length}
         />
@@ -47,17 +48,25 @@ const LocaleField = ({
         <LocaleInput
           label="keywords"
           value={keywordsMeta}
-          onChange={(e) => setKeywordsMeta(e.target.value)}
-          onClear={() => handleClear(setKeywordsMeta)}
+          onChange={(e) => setKeywordsMeta(e.target.value, name)}
+          onClear={() => setKeywordsMeta("", name)}
           maxLength={100}
           length={keywordsMeta.length}
         />
       </div>
 
       <div className={styles.buttonGroup}>
-        <button>gen</button>
-        <button>add</button>
-        <button>lock</button>
+        <button
+          onClick={() => generatorKeywords(name, title, subtitle, keywordsMeta)}
+        >
+          gen
+        </button>
+        <button
+          onClick={() => createLocale(name, title, subtitle, keywordsMeta)}
+        >
+          add
+        </button>
+        <button onClick={() => setStatus(name, !status)}>lock</button>
       </div>
     </div>
   );

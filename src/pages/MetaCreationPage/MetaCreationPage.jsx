@@ -7,55 +7,93 @@ import { ignoredWords } from "../../data/ignoredWords";
 import { cleanPhrase } from "../../utils/helperFunction";
 import * as XLSX from "xlsx";
 import styles from "./MetaCreationPage.module.css";
+import { LOCALES } from "../../data/constants";
+import LocaleSelector from "../../components/functionality/LocaleSelector";
+import useDataStore from "../../store/useDataStore";
+import useTotalStore from "../../store/useTotalStore";
 
 const MetaCreationPage = () => {
+  const currentState = useTotalStore.getState();
+
+  // Состояние для данных каждой локали
+  const [localesData, setLocalesData] = useState({
+    US: { title: "", subtitle: "", keywordsMeta: "", status: true },
+    MX: { title: "", subtitle: "", keywordsMeta: "", status: true },
+    RU: { title: "", subtitle: "", keywordsMeta: "", status: true },
+    CH_S: { title: "", subtitle: "", keywordsMeta: "", status: true },
+    CH_T: { title: "", subtitle: "", keywordsMeta: "", status: true },
+    SA: { title: "", subtitle: "", keywordsMeta: "", status: true },
+    BR: { title: "", subtitle: "", keywordsMeta: "", status: true },
+    VI: { title: "", subtitle: "", keywordsMeta: "", status: true },
+    KO: { title: "", subtitle: "", keywordsMeta: "", status: true },
+    FR: { title: "", subtitle: "", keywordsMeta: "", status: true },
+    UK: { title: "", subtitle: "", keywordsMeta: "", status: true },
+    AU: { title: "", subtitle: "", keywordsMeta: "", status: true },
+    DE: { title: "", subtitle: "", keywordsMeta: "", status: true },
+    CA_EN: { title: "", subtitle: "", keywordsMeta: "", status: true },
+    CA_FR: { title: "", subtitle: "", keywordsMeta: "", status: true },
+  });
+  // Функции для обновления данных локали
+  const updateLocaleData = (localeID, newData) => {
+    setLocalesData((prev) => ({
+      ...prev,
+      [localeID]: { ...prev[localeID], ...newData },
+    }));
+  };
+  const setTitle = (newTitle, localID) => {
+    updateLocaleData(localID, { title: newTitle });
+  };
+  const setSubtitle = (newSubtitle, localID) => {
+    updateLocaleData(localID, { subtitle: newSubtitle });
+  };
+  const setKeywordsMeta = (newKeywordsMeta, localID) => {
+    updateLocaleData(localID, { keywordsMeta: newKeywordsMeta });
+  };
+  const setStatus = (localeID, newStatus) => {
+    updateLocaleData(localeID, { status: newStatus });
+  };
+
   const [keywords, setKeywords] = useState([]); // Очищенные фразы и трафик
   const [usedKeywords, setUsedKeywords] = useState([]);
-  const [title, setTitle] = useState("");
-  const [subtitle, setSubtitle] = useState("");
-  const [keywordsMeta, setKeywordsMeta] = useState("");
+
   const [selectedTab, setSelectedTab] = useState("phrases");
-  const [locales, setLocales] = useState([]);
+
+  const [locales, setLocales] = useState({});
   const [localeName, setLocaleName] = useState("");
+
   const [searchQuery, setSearchQuery] = useState("");
   const [hideCollectedPhrases, setHideCollectedPhrases] = useState(false);
   const [selectedPhrases, setSelectedPhrases] = useState(new Set()); // Выбранные фразы
 
-  // Функция для загрузки файла
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, { type: "array" });
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-      // Обрабатываем данные
-      const newKeywords = json
-        .map((row) => ({
-          phrase: row[0], // Первый столбец — фраза
-          traffic: Number(row[1]) || 0, // Второй столбец — трафик
-        }))
-        .filter((keyword) => keyword.phrase); // Убираем пустые фразы
-
-      // Добавляем новые фразы
-      setKeywords((prevKeywords) => {
-        const updatedKeywords = [...prevKeywords, ...newKeywords];
-        // Сортируем по трафику (от большего к меньшему)
-        return updatedKeywords.sort((a, b) => b.traffic - a.traffic);
-      });
-    };
-    reader.readAsArrayBuffer(file);
+  const [selectedLocale, setSelectedLocale] = useState(null);
+  // для переключения локалей
+  const handleLocaleSelect = (code) => {
+    const locale = LOCALES.find((loc) => loc.code === code);
+    setSelectedLocale(locale);
+    updateKeywords(locale.code);
+    setSelectedPhrases(new Set());
+    setUsedKeywords([]);
   };
 
-  const getWordCounts = () => {
-    const wordCounts = {};
+  //store
+  const updateKeywords = (locale) => {
+    // Получаем данные из Zustand-стора
+    const storeData = useDataStore.getState().data;
+    // Выбираем данные для выбранной локали
+    const localeData = storeData[locale] || [];
+    // Преобразуем массив, оставляя только id и traffic
+    const transformedData = localeData.map((item) => ({
+      phrase: item.id,
+      traffic: Number(item.traffic) || 0,
+    }));
+    // Обновляем keywords через setKeywords
+    setKeywords(transformedData);
+  };
 
-    keywords.forEach(({ phrase }) => {
+  const getWordCounts = (keywords) => {
+    const wordCounts = {};
+    const clearKeywords = keywords.map((item) => cleanPhrase(item.phrase));
+    clearKeywords.forEach((phrase) => {
       const words = phrase.split(" ");
       words.forEach((word) => {
         if (word && !ignoredWords.includes(word.toLowerCase())) {
@@ -74,9 +112,29 @@ const MetaCreationPage = () => {
       .toLowerCase()
       .split(" ")
       .filter((word) => !ignoredWords.includes(word));
-    const allText = `${title} ${subtitle} ${keywordsMeta}`.toLowerCase();
+    // создание массива локали чтобы сравнивать
+    const createLocaleArray = (locale) => {
+      const title = localesData[locale].title;
+      const subtitle = localesData[locale].subtitle;
+      const keywords = localesData[locale].keywordsMeta;
+      const result = cleanPhrase(
+        `${title} ${subtitle} ${keywords}`.toLowerCase(),
+      ).split(" ");
+      return result;
+    };
+    //создание массива для сравнения на основе условия + все массивы локалей
+    const checkConditionAddArray = () => {
+      const counter = selectedLocale.locales;
+      const resultArray = counter
+        .filter((item) => localesData[item].status)
+        .map((item) => createLocaleArray(item));
+      return resultArray;
+    };
+    const allLocalesArray = selectedLocale ? checkConditionAddArray() : [];
 
-    return phraseWords.every((word) => allText.includes(word));
+    return allLocalesArray.some((localeArr) =>
+      phraseWords.every((word) => localeArr.includes(word)),
+    );
   };
 
   // Функция для подсчета использованных фраз
@@ -100,12 +158,27 @@ const MetaCreationPage = () => {
 
   // Функция для корректного отображения использованных слов
   const getHighlightedWords = () => {
-    const allText = `${title} ${subtitle} ${keywordsMeta}`.toLowerCase();
-    const words = allText
-      .replace(/[^\p{L}\p{N}]/gu, " ") // Убираем все, кроме букв и цифр
-      .split(/\s+/) // Разбиваем на слова по пробелам
-      .filter((word) => word.length > 0); // Убираем пустые строки (если они есть)
-    return [...new Set(words)];
+    // создание массива локали
+    const createLocaleArray = (locale) => {
+      const title = localesData[locale].title;
+      const subtitle = localesData[locale].subtitle;
+      const keywords = localesData[locale].keywordsMeta;
+      const result = cleanPhrase(
+        `${title} ${subtitle} ${keywords}`.toLowerCase(),
+      ).split(" ");
+
+      return result;
+    };
+    const addAllLocalesArray = () => {
+      const resultArray = selectedLocale.locales
+        .filter((item) => localesData[item].status)
+        .map((item) => createLocaleArray(item))
+        .flat()
+        .filter((str) => str.trim() !== ""); // Удаляем пустые строки
+      return resultArray;
+    };
+    const allLocalesArray = selectedLocale ? addAllLocalesArray() : [];
+    return [...new Set(allLocalesArray)];
   };
 
   // Функция для добавления в использованные слова
@@ -115,7 +188,10 @@ const MetaCreationPage = () => {
 
     // Добавляем фразы в список использованных
     setUsedKeywords((prevUsedKeywords) => [...prevUsedKeywords, ...phrases]);
-
+    //add to store
+    useTotalStore
+      .getState()
+      .addUsedKeywordPhrases(selectedLocale.code, phrases);
     // Убираем фразы из списка keywords
     setKeywords((prevKeywords) =>
       prevKeywords.filter(({ phrase }) => !phrases.includes(phrase)),
@@ -129,35 +205,55 @@ const MetaCreationPage = () => {
   };
 
   // Создание локали
-  const createLocale = () => {
-    if (!localeName.trim()) {
-      alert("Введите название локали!");
-      return;
-    }
-
-    // Создаем новую локаль
-    const newLocale = {
-      name: localeName,
+  const createLocale = (name, title, subtitle, keywordsMeta) => {
+    // Добавляем новую локаль в список локалей
+    const data = {
       title,
       subtitle,
-      keywords: keywordsMeta,
+      keywordsMeta,
     };
+    if (localesData[name].status) {
+      setLocales({
+        ...locales,
+        [name]: { name: name, title, subtitle, keywordsMeta },
+      });
 
-    // Добавляем новую локаль в список локалей
-    setLocales([...locales, newLocale]);
+      // Находим фразы, которые использованы в локали и берем тольку фразу
+      const phrasesUsedInLocale = [
+        ...new Set(
+          cleanPhrase(`${title} ${subtitle} ${keywordsMeta}`)
+            .split(" ")
+            .filter((str) => str.trim() !== ""), // Удаляем пустые строкиs
+        ),
+      ];
 
-    // Находим фразы, которые использованы в локали
-    const phrasesUsedInLocale = keywords
-      .filter((item) => isPhraseUsed(item.phrase))
-      .map((item) => item.phrase);
-    // Используем универсальную функцию для добавления фраз в использованные
-    addPhrasesToUsed(phrasesUsedInLocale);
+      const findPhrases = (phrases, words) => {
+        // Массив для найденных фраз
+        const foundPhrases = [];
+        // Проходим по каждой фразе
+        phrases.forEach((phraseObj) => {
+          // Разделяем фразу на слова
+          const phraseWords = cleanPhrase(phraseObj.phrase).split(" ");
 
-    // Очищаем поля
-    setTitle("");
-    setSubtitle("");
-    setKeywordsMeta("");
-    setLocaleName("");
+          // Проверяем, содержатся ли все слова фразы в массиве слов
+          const isPhraseFound = phraseWords.every((word) =>
+            words.includes(word),
+          );
+
+          // Если фраза найдена, добавляем её в массив
+          if (isPhraseFound) {
+            foundPhrases.push(phraseObj.phrase);
+          }
+        });
+        return foundPhrases;
+      };
+      const lastArray = findPhrases(keywords, phrasesUsedInLocale);
+      //Используем универсальную функцию для добавления фраз в использованные
+      addPhrasesToUsed(lastArray);
+      //add to store
+      useTotalStore.getState().updateLocaleTab(name, data);
+      setStatus(name, false);
+    }
   };
 
   // Функция для выбора/снятия выбора фразы
@@ -193,24 +289,67 @@ const MetaCreationPage = () => {
     });
   };
 
+  const generatorKeywords = (
+    name,
+    title,
+    subtitle,
+    keywordsMeta,
+    maxLength = 100,
+  ) => {
+    // Собираем все слова из title, subtitle и keywords в один набор
+    const usedWords = new Set([
+      ...title.split(" "),
+      ...subtitle.split(" "),
+      ...keywordsMeta.split(",").map((kw) => kw.trim()),
+    ]);
+    const wordCounts = getWordCounts(keywords);
+    // Сортируем слова по убыванию количества повторений
+    const sortedWords = Object.entries(wordCounts)
+      .map(([word, count]) => ({ word, count }))
+      .sort((a, b) => b.count - a.count);
+
+    // Начинаем с текущих keywords
+    let newKeywords = keywordsMeta.trim();
+    // Проверяем, есть ли запятая в конце
+    let endsWithComma = newKeywords.endsWith(",") || !newKeywords.length;
+    console.log(endsWithComma);
+
+    // Проходим по отсортированным словам
+    for (const { word } of sortedWords) {
+      // Если слово уже использовано, пропускаем
+      if (usedWords.has(word)) continue;
+
+      // Проверяем, хватит ли места для нового слова
+      const newKeywordLength =
+        newKeywords.length + word.length + (endsWithComma ? 0 : 1); // +1 для запятой (если её нет)
+      if (newKeywordLength <= maxLength) {
+        // Добавляем слово через запятую без пробела
+        newKeywords = endsWithComma
+          ? `${newKeywords}${word}` // Если есть запятая, добавляем только слово
+          : `${newKeywords},${word}`; // Если нет запятой, добавляем запятую и слово
+        // Добавляем слово в usedWords, чтобы не повторяться
+        usedWords.add(word);
+        // Обновляем флаг endsWithComma
+        endsWithComma = !endsWithComma;
+      }
+      // Если слово не помещается, просто пропускаем его и продолжаем цикл
+    }
+    return setKeywordsMeta(newKeywords, name);
+  };
+
   const highlightedWords = getHighlightedWords();
   const usedPhrasesCount = countUsedPhrases(); // Количество использованных фраз (всех)
   const filteredKeywords = filterKeywords(); // Отфильтрованные ключевые фразы
 
   return (
     <div className={styles.container}>
-      {/* Кнопка для загрузки файла */}
+      {/* Кнопка для выбора локалей*/}
       <div style={{ marginBottom: "20px" }}>
-        <input
-          type="file"
-          accept=".csv, .xlsx"
-          onChange={handleFileUpload}
-          style={{ display: "none" }}
-          id="fileInput"
+        <LocaleSelector
+          locales={LOCALES}
+          selectedLocale={selectedLocale?.code}
+          onSelect={handleLocaleSelect}
         />
-        <label htmlFor="fileInput" className={styles.fileUploadLabel}>
-          Загрузить из файла
-        </label>
       </div>
       <div className={styles.panel}>
         {/*Левая часть: Таблица уникальных слов и использованных фраз */}
@@ -240,7 +379,7 @@ const MetaCreationPage = () => {
 
           {selectedTab === "unique" && (
             <UniqueWordsTable
-              wordCounts={getWordCounts()}
+              wordCounts={getWordCounts(keywords)}
               highlightedWords={highlightedWords}
             />
           )}
@@ -271,43 +410,24 @@ const MetaCreationPage = () => {
         <div className={styles.rightPanel}>
           <div className={styles.section}>
             <MetadataForm
-              title={title}
-              subtitle={subtitle}
-              keywordsMeta={keywordsMeta}
+              selectedLocale={selectedLocale}
+              localesData={localesData}
               setTitle={setTitle}
               setSubtitle={setSubtitle}
               setKeywordsMeta={setKeywordsMeta}
-              keywords={keywords}
+              setStatus={setStatus}
+              createLocale={createLocale}
+              generatorKeywords={generatorKeywords}
             />
-            <div style={{ marginTop: "16px" }}>
-              <label
-                style={{
-                  display: "block",
-                  marginBottom: "8px",
-                  fontWeight: "bold",
-                }}
-              >
-                Название локали:
-              </label>
-              <input
-                type="text"
-                value={localeName}
-                onChange={(e) => setLocaleName(e.target.value)}
-                placeholder="Введите название локали (например, ru-RU)"
-                className={styles.localeInput}
-              />
-            </div>
-            <button onClick={createLocale} className={styles.localeButton}>
-              Сформировать локаль
-            </button>
+
             <button
-              onClick={() => console.log(usedKeywords)}
+              onClick={() => console.log(locales)}
               className={styles.localeButton}
             >
               proverka
             </button>
             <button
-              onClick={() => console.log(selectedPhrases)}
+              onClick={() => console.log(currentState)}
               className={styles.localeButton}
             >
               proverka orig

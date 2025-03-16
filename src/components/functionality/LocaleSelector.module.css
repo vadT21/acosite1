@@ -1,0 +1,26 @@
+/* src/components/LocaleSelector/LocaleSelector.module.css */
+.localeSelector {
+  margin-bottom: 2rem;
+}
+
+.localeSelector label {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.locales {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.locale {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.locale input[type="radio"] {
+  cursor: pointer;
+}

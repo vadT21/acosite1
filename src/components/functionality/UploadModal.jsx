@@ -3,7 +3,7 @@ import { useState } from "react";
 import * as XLSX from "xlsx";
 import useDataStore from "../../store/useDataStore";
 import { ignoredWords } from "../../data/ignoredWords";
-import { localesImport } from "../../data/constants";
+import { LOCALES } from "../../data/constants";
 import styles from "./UploadModal.module.css";
 import { cleanPhrase } from "../../utils/helperFunction";
 
@@ -41,7 +41,6 @@ const UploadModal = ({ isOpen, onClose }) => {
 
       // Обрабатываем данные (первый и второй столбцы, начиная со второй строки)
       const items = jsonData.slice(1).map((row, index) => {
-        console.log(row);
         return {
           id: row[0], // Первый столбец (полное название)
           short: formatShortName(row[0]), // Второй столбец (сокращенное название)
@@ -52,7 +51,7 @@ const UploadModal = ({ isOpen, onClose }) => {
 
       // Добавляем данные в оба хранилища
       items.forEach((item) => {
-        addToDataStore(locale, item);
+        addToDataStore(locale.code, item);
       });
     };
     reader.readAsBinaryString(file);
@@ -65,9 +64,9 @@ const UploadModal = ({ isOpen, onClose }) => {
       <div className={styles.modalContent}>
         <h2>Upload Files</h2>
         <div className={styles.fileInputs}>
-          {localesImport.map((locale) => (
-            <div key={locale} className={styles.fileInput}>
-              <label>{locale}</label>
+          {LOCALES.map((locale) => (
+            <div key={locale.code} className={styles.fileInput}>
+              <label>{locale.code}</label>
               <input
                 type="file"
                 accept=".xlsx"
