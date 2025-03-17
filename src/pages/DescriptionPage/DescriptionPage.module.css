@@ -31,13 +31,25 @@
   margin-bottom: 1rem;
 }
 
+.generatedTextarea {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: vertical;
+  margin-bottom: 1rem;
+  min-height: 600px;
+}
+
 .button {
-  padding: 0.5rem 1rem;
+  min-width: 100px;
+  padding: 0.7rem 1.2rem;
   font-size: 1rem;
   background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
   transition: background-color 0.3s ease;
   margin-right: 0.5rem;
@@ -45,4 +57,9 @@
 
 .button:hover {
   background-color: #0056b3;
+}
+.groupButton {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
 }

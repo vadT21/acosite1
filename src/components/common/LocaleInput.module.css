@@ -1,8 +1,9 @@
 .container {
-  max-width: 50%;
+  gap: 5px;
 }
 
 .sectionHeader {
+  padding-left: 5px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -18,11 +19,14 @@
 }
 
 .input {
+  min-height: 70px;
   padding: 6px;
   border: 1px solid #ddd;
   border-radius: 4px;
   resize: none;
-  font-size: 12px;
+}
+.input30 {
+  min-height: 15px;
 }
 .forIndicator {
   position: relative;

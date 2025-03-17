@@ -1,5 +1,6 @@
 import React from "react";
 import LocaleField from "./functionality/LocaleField";
+import styles from "./stylesForComponents.module.css";
 
 const MetadataForm = ({
   selectedLocale,
@@ -12,7 +13,7 @@ const MetadataForm = ({
   generatorKeywords,
 }) => {
   return (
-    <div>
+    <div className={styles.blockMetadataForm}>
       {selectedLocale?.locales ? (
         selectedLocale.locales.map((localeID) => (
           <LocaleField

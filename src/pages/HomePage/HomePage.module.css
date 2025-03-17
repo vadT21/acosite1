@@ -3,19 +3,29 @@
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
 }
 
-.homePage .h1 {
+.h1 {
   text-align: center;
   margin-bottom: 2rem;
 }
-
-.homePage .button {
+.groupButton {
+  display: flex;
+  gap: 30px;
+}
+.button {
   padding: 0.5rem 1rem;
+  width: 200px;
+  height: 60px;
   font-size: 1rem;
   background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 15px;
   cursor: pointer;
 }

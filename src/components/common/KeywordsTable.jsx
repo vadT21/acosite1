@@ -83,7 +83,7 @@ const KeywordsTable = ({
                     onChange={() => togglePhraseSelection(phrase)}
                   />
                 </td>
-                <td className={styles.cell}>
+                <td className={`${styles.cell} ${styles.cell2}`}>
                   {highlightText(phrase, highlightedWords)}
                 </td>
                 <td className={styles.cell}>{traffic}</td>

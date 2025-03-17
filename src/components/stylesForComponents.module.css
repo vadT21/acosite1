@@ -1,0 +1,9 @@
+.blockMetadataForm {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(200px, 320px)
+  ); /* Автоматически подстраивает количество колонок */
+  gap: 16px; /* Расстояние между блоками */
+  max-width: 100%; /* Ограничиваем ширину контейнера */
+}

@@ -5,7 +5,6 @@ import UsedKeywords from "../../components/UsedKeywordsField";
 import MetadataForm from "../../components/MetadataForm";
 import { ignoredWords } from "../../data/ignoredWords";
 import { cleanPhrase } from "../../utils/helperFunction";
-import * as XLSX from "xlsx";
 import styles from "./MetaCreationPage.module.css";
 import { LOCALES } from "../../data/constants";
 import LocaleSelector from "../../components/functionality/LocaleSelector";
@@ -13,8 +12,6 @@ import useDataStore from "../../store/useDataStore";
 import useTotalStore from "../../store/useTotalStore";
 
 const MetaCreationPage = () => {
-  const currentState = useTotalStore.getState();
-
   // Состояние для данных каждой локали
   const [localesData, setLocalesData] = useState({
     US: { title: "", subtitle: "", keywordsMeta: "", status: true },
@@ -312,8 +309,6 @@ const MetaCreationPage = () => {
     let newKeywords = keywordsMeta.trim();
     // Проверяем, есть ли запятая в конце
     let endsWithComma = newKeywords.endsWith(",") || !newKeywords.length;
-    console.log(endsWithComma);
-
     // Проходим по отсортированным словам
     for (const { word } of sortedWords) {
       // Если слово уже использовано, пропускаем
@@ -330,7 +325,7 @@ const MetaCreationPage = () => {
         // Добавляем слово в usedWords, чтобы не повторяться
         usedWords.add(word);
         // Обновляем флаг endsWithComma
-        endsWithComma = !endsWithComma;
+        endsWithComma = false;
       }
       // Если слово не помещается, просто пропускаем его и продолжаем цикл
     }
@@ -344,7 +339,7 @@ const MetaCreationPage = () => {
   return (
     <div className={styles.container}>
       {/* Кнопка для выбора локалей*/}
-      <div style={{ marginBottom: "20px" }}>
+      <div>
         <LocaleSelector
           locales={LOCALES}
           selectedLocale={selectedLocale?.code}
@@ -419,19 +414,6 @@ const MetaCreationPage = () => {
               createLocale={createLocale}
               generatorKeywords={generatorKeywords}
             />
-
-            <button
-              onClick={() => console.log(locales)}
-              className={styles.localeButton}
-            >
-              proverka
-            </button>
-            <button
-              onClick={() => console.log(currentState)}
-              className={styles.localeButton}
-            >
-              proverka orig
-            </button>
           </div>
         </div>
       </div>

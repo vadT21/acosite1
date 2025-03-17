@@ -4,6 +4,7 @@
 }
 
 .header {
+  margin-bottom: 0;
 }
 
 .searchInput {
@@ -28,19 +29,14 @@ thead {
   z-index: 10;
 }
 
-th,
-td {
-  text-align: left;
-}
-
 .headerRow {
   background-color: #f5f5f5;
 }
 
 .headerCell {
-  padding: 10px;
+  padding: 5px;
+  font-size: 14px;
   border: 1px solid #ddd;
-  text-align: left;
 }
 
 .row {
@@ -48,12 +44,17 @@ td {
 }
 
 .cell {
-  padding: 10px;
+  padding: 5px;
+  text-align: center;
   border: 1px solid #ddd;
+}
+.cell2 {
+  padding-left: 10px;
+  text-align: left;
 }
 
 .buttonAdd {
-  padding: 4px 8px;
+  padding: 4px 7px;
   background-color: #28a745;
   color: #fff;
   border: none;
@@ -67,7 +68,7 @@ td {
 }
 
 .buttonDelete {
-  padding: 4px 8px;
+  padding: 3px 6px;
   background-color: #ff4d4f;
   color: #fff;
   border: none;

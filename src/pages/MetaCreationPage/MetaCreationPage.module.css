@@ -1,8 +1,7 @@
 .container {
   display: flex;
   flex-direction: column;
-
-  padding: 10px;
+  padding-left: 20px;
   font-family: Arial, sans-serif;
 }
 
@@ -13,20 +12,20 @@
 }
 
 .leftPanel {
-  flex: 0 0 20%;
+  flex: 0 0 15%;
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 10px;
 }
 .centerPanel {
-  flex: 0 0 30%;
+  flex: 0 0 25%;
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 10px;
 }
 
 .rightPanel {
-  flex: 0 0 45%;
+  flex: 0 0 55%;
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 10px;

@@ -2,20 +2,23 @@
 import { useState } from "react";
 import TextAreaWithButton from "../../components/functionality/TextAreaWithButton";
 import styles from "./DescriptionPage.module.css";
+import useTotalStore from "../../store/useTotalStore";
+import {
+  DOWNLOAD,
+  INFO_SUB,
+  PRIVACY,
+  SUB,
+  SUPPORT,
+  TERMS,
+  TITLE_FEATURES,
+  TITLE_PRIVACY,
+  TITLE_SUB,
+} from "../../data/description";
 
 const DescriptionPage = () => {
   const [fields, setFields] = useState({
     desc: "",
-    title_features: "",
     features: "",
-    title_sub: "",
-    sub: "",
-    info_sub: "",
-    title_privacy: "",
-    privacy: "",
-    terms: "",
-    support: "",
-    download: "",
     final_desc: "",
   });
 
@@ -24,11 +27,40 @@ const DescriptionPage = () => {
   const handleChange = (field, value) => {
     setFields((prev) => ({ ...prev, [field]: value }));
   };
-
+  //random phrase
+  const getRandomPhrase = (phrases) => {
+    const randomIndex = Math.floor(Math.random() * phrases.length); // Генерируем случайный индекс
+    return phrases[randomIndex]; // Возвращаем случайную фразу
+  };
+  const title_features_generated = getRandomPhrase(TITLE_FEATURES);
+  const title_sub_generated = getRandomPhrase(TITLE_SUB);
+  const sub_generated = getRandomPhrase(SUB);
+  const info_sub_generated = getRandomPhrase(INFO_SUB);
+  const title_privacy_generated = getRandomPhrase(TITLE_PRIVACY);
+  const privacy_generated = getRandomPhrase(PRIVACY);
+  const terms_generated = getRandomPhrase(TERMS);
+  const support_generated = getRandomPhrase(SUPPORT);
+  const download_generated = getRandomPhrase(DOWNLOAD);
+  const emptyString = "";
   const handleGenerate = () => {
-    const allValues = Object.values(fields)
-      .filter((value, key) => key !== "final_desc") // Исключаем final_desc
-      .join("\n"); // Соединяем значения через перенос строки
+    const allValues = [
+      fields.desc,
+      emptyString,
+      title_features_generated,
+      fields.features,
+      title_sub_generated,
+      sub_generated,
+      emptyString,
+      info_sub_generated,
+      emptyString,
+      title_privacy_generated,
+      privacy_generated,
+      terms_generated,
+      support_generated,
+      emptyString,
+      download_generated,
+    ].join("\n");
+    // Соединяем значения через перенос строки
 
     setFields((prev) => ({ ...prev, final_desc: allValues }));
     setCharCount(allValues.length); // Обновляем счетчик символов
@@ -39,80 +71,35 @@ const DescriptionPage = () => {
     setCharCount(value.length); // Обновляем счетчик символов
   };
 
+  const handleClear = () => {
+    setFields({
+      desc: "",
+      features: "",
+      final_desc: "",
+    });
+    setCharCount(0);
+  };
+  const handeAddToStore = () => {
+    const desc = fields.final_desc;
+    useTotalStore.getState().updateDesc(desc);
+  };
+
   return (
     <div className={styles.descriptionPage}>
       <div className={styles.columns}>
         {/* Первый столбец */}
         <div className={styles.column}>
           <TextAreaWithButton
-            title="Desc"
+            title="Description"
             value={fields.desc}
             onChange={(value) => handleChange("desc", value)}
             onGenerate={() => handleGenerate("desc")}
           />
           <TextAreaWithButton
-            title="title_features"
-            value={fields.title_features}
-            onChange={(value) => handleChange("title_features", value)}
-            onGenerate={() => handleGenerate("title_features")}
-          />
-          <TextAreaWithButton
-            title="features"
+            title="Features"
             value={fields.features}
             onChange={(value) => handleChange("features", value)}
             onGenerate={() => handleGenerate("features")}
-          />
-          <TextAreaWithButton
-            title="title_sub"
-            value={fields.title_sub}
-            onChange={(value) => handleChange("title_sub", value)}
-            onGenerate={() => handleGenerate("title_sub")}
-          />
-          <TextAreaWithButton
-            title="sub"
-            value={fields.sub}
-            onChange={(value) => handleChange("sub", value)}
-            onGenerate={() => handleGenerate("sub")}
-          />
-        </div>
-
-        {/* Второй столбец */}
-        <div className={styles.column}>
-          <TextAreaWithButton
-            title="info_sub"
-            value={fields.info_sub}
-            onChange={(value) => handleChange("info_sub", value)}
-            onGenerate={() => handleGenerate("info_sub")}
-          />
-          <TextAreaWithButton
-            title="title_privacy"
-            value={fields.title_privacy}
-            onChange={(value) => handleChange("title_privacy", value)}
-            onGenerate={() => handleGenerate("title_privacy")}
-          />
-          <TextAreaWithButton
-            title="privacy"
-            value={fields.privacy}
-            onChange={(value) => handleChange("privacy", value)}
-            onGenerate={() => handleGenerate("privacy")}
-          />
-          <TextAreaWithButton
-            title="terms"
-            value={fields.terms}
-            onChange={(value) => handleChange("terms", value)}
-            onGenerate={() => handleGenerate("terms")}
-          />
-          <TextAreaWithButton
-            title="support"
-            value={fields.support}
-            onChange={(value) => handleChange("support", value)}
-            onGenerate={() => handleGenerate("support")}
-          />
-          <TextAreaWithButton
-            title="download"
-            value={fields.download}
-            onChange={(value) => handleChange("download", value)}
-            onGenerate={() => handleGenerate("download")}
           />
         </div>
 
@@ -120,12 +107,22 @@ const DescriptionPage = () => {
         <div className={styles.column}>
           <div className={styles.counter}>{charCount} / 4000</div>
           <textarea
+            className={styles.generatedTextarea}
             value={fields.final_desc}
             onChange={(e) => handleFinalDescChange(e.target.value)}
             placeholder="Final description will appear here"
           />
-          <button onClick={handleGenerate}>Generate</button>
-          <button>Add</button>
+          <div className={styles.groupButton}>
+            <button className={styles.button} onClick={handleGenerate}>
+              Generate
+            </button>
+            <button className={styles.button} onClick={handleClear}>
+              Clear
+            </button>
+            <button className={styles.button} onClick={handeAddToStore}>
+              Add
+            </button>
+          </div>
         </div>
       </div>
     </div>

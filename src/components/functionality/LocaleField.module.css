@@ -1,9 +1,51 @@
 .container {
-  display: flex;
-  align-items: center;
+  padding: 5px;
   padding-bottom: 10px;
+  width: 300px;
+  border: 2px #007bff solid;
 }
 
+.block1 {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.block2 {
+  display: flex;
+  flex-direction: column;
+}
 .name {
   font-size: 10px;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: space-between;
+}
+.button1 {
+  width: 50px;
+  padding: 4px 7px;
+  background-color: #4345d6;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.button2 {
+  width: 50px;
+  padding: 4px 7px;
+  background-color: #0d551e;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.button3 {
+  width: 50px;
+  padding: 4px 7px;
+  background-color: #504610;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }

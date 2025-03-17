@@ -25,11 +25,11 @@ const LocaleInput = ({
       </div>
 
       <div className={styles.inputContainer}>
-        <input
+        <textarea
           type="text"
           value={value}
           onChange={onChange}
-          className={styles.input}
+          className={`${styles.input} ${maxLength == 30 ? styles.input30 : ""}`}
         />
         <div className={styles.forIndicator}>
           <Indicator length={length} maxLength={maxLength} />
