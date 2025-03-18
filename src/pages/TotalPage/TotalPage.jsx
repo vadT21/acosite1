@@ -30,7 +30,6 @@ const TotalPage = () => {
         <thead>
           <tr>
             <th>Locale</th>
-            <th>Name</th>
             <th>Title</th>
             <th>Subtitle</th>
             <th>Keywords</th>
@@ -40,10 +39,9 @@ const TotalPage = () => {
           {Object.entries(locales).map(([locale, data]) => (
             <tr key={locale}>
               <td>{locale}</td>
-              <td>{data.name}</td>
               <td>{data.title}</td>
               <td>{data.subtitle}</td>
-              <td>{data.keywords}</td>
+              <td>{data.keywordsMeta}</td>
             </tr>
           ))}
         </tbody>
