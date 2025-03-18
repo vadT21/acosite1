@@ -82,7 +82,7 @@ const useTotalStore = create((set, get) => ({
       },
     })),
   // Метод для полной очистки стора
-  clearStore: () => set(initialState),
+  clearStore: () => set({ ...initialState }),
 }));
 
 export default useTotalStore;
