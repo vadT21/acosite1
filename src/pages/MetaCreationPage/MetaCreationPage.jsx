@@ -219,22 +219,27 @@ const MetaCreationPage = () => {
       const phrasesUsedInLocale = [
         ...new Set(
           cleanPhrase(`${title} ${subtitle} ${keywordsMeta}`)
+            .toLowerCase()
             .split(" ")
+            .filter((word) => !ignoredWords.includes(word))
             .filter((str) => str.trim() !== ""), // Удаляем пустые строкиs
         ),
       ];
 
-      const findPhrases = (phrases, words) => {
+      const findPhrases = (phrasesAll, wordsUsedinLocale) => {
         // Массив для найденных фраз
         const foundPhrases = [];
         // Проходим по каждой фразе
-        phrases.forEach((phraseObj) => {
+        //
+        phrasesAll.forEach((phraseObj) => {
           // Разделяем фразу на слова
-          const phraseWords = cleanPhrase(phraseObj.phrase).split(" ");
-
+          const phraseWords = cleanPhrase(phraseObj.phrase)
+            .split(" ")
+            .filter((word) => !ignoredWords.includes(word))
+            .filter((str) => str.trim() !== ""); // Удаляем пустые строкиs
           // Проверяем, содержатся ли все слова фразы в массиве слов
           const isPhraseFound = phraseWords.every((word) =>
-            words.includes(word),
+            wordsUsedinLocale.includes(word),
           );
 
           // Если фраза найдена, добавляем её в массив
@@ -294,10 +299,21 @@ const MetaCreationPage = () => {
     maxLength = 100,
   ) => {
     // Собираем все слова из title, subtitle и keywords в один набор
-    const usedWords = new Set([
-      ...title.split(" "),
-      ...subtitle.split(" "),
-      ...keywordsMeta.split(",").map((kw) => kw.trim()),
+    const usingWords = new Set([
+      ...cleanPhrase(title)
+        .toLowerCase()
+        .split(" ")
+        .map((kw) => kw.trim()),
+
+      ...cleanPhrase(subtitle)
+        .toLowerCase()
+        .split(" ")
+        .map((kw) => kw.trim()),
+
+      ...cleanPhrase(keywordsMeta)
+        .toLowerCase()
+        .split(",")
+        .map((kw) => kw.trim()),
     ]);
     const wordCounts = getWordCounts(keywords);
     // Сортируем слова по убыванию количества повторений
@@ -312,7 +328,7 @@ const MetaCreationPage = () => {
     // Проходим по отсортированным словам
     for (const { word } of sortedWords) {
       // Если слово уже использовано, пропускаем
-      if (usedWords.has(word)) continue;
+      if (usingWords.has(word)) continue;
 
       // Проверяем, хватит ли места для нового слова
       const newKeywordLength =
@@ -323,7 +339,7 @@ const MetaCreationPage = () => {
           ? `${newKeywords}${word}` // Если есть запятая, добавляем только слово
           : `${newKeywords},${word}`; // Если нет запятой, добавляем запятую и слово
         // Добавляем слово в usedWords, чтобы не повторяться
-        usedWords.add(word);
+        usingWords.add(word);
         // Обновляем флаг endsWithComma
         endsWithComma = false;
       }
