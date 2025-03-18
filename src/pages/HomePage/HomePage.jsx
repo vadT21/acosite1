@@ -12,6 +12,7 @@ const HomePage = () => {
     useTotalStore.getState().clearStore();
   };
   const handleClearStore = () => {
+    useTotalStore.getState().clearStore();
     useDataStore.getState().clearStore();
   };
 
