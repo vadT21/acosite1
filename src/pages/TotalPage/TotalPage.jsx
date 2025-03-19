@@ -8,7 +8,25 @@ const TotalPage = () => {
   const description = useTotalStore((state) => state.desc); // Получаем description
   const usedKeywords = useTotalStore((state) => state.usedKeywordPhrases); // Получаем usedKeywords
   const [copied, setCopied] = useState(false); // Состояние для уведомления о копировании
-  console.log(usedKeywords);
+
+  // Задаем порядок локалей
+  const localeOrder = [
+    "US",
+    "MX",
+    "RU",
+    "CH_S",
+    "CH_T",
+    "SA",
+    "BR",
+    "VI",
+    "KO",
+    "FR",
+    "UK",
+    "AU",
+    "DE",
+    "CA_EN",
+    "CA_FR",
+  ]; // Пример порядка
 
   // Функция для преобразования usedKeywords в читаемый формат
   const formatUsedKeywords = (keywords) => {
@@ -16,6 +34,7 @@ const TotalPage = () => {
       .map(([locale, words]) => `${locale}\n${words.join("\n")}`)
       .join("\n\n");
   };
+
   // Функция для обработки успешного копирования
   const handleCopy = () => {
     setCopied(true);
@@ -36,14 +55,19 @@ const TotalPage = () => {
           </tr>
         </thead>
         <tbody>
-          {Object.entries(locales).map(([locale, data]) => (
-            <tr key={locale}>
-              <td>{locale}</td>
-              <td>{data.title}</td>
-              <td>{data.subtitle}</td>
-              <td>{data.keywordsMeta}</td>
-            </tr>
-          ))}
+          {localeOrder
+            .filter((locale) => locales[locale]) // Фильтруем только существующие локали
+            .map((locale) => {
+              const data = locales[locale];
+              return (
+                <tr key={locale}>
+                  <td className={styles.notCopy}>{locale}</td>
+                  <td>{data.title}</td>
+                  <td>{data.subtitle}</td>
+                  <td>{data.keywordsMeta}</td>
+                </tr>
+              );
+            })}
         </tbody>
       </table>
 
